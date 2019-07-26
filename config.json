@@ -54,49 +54,210 @@
                 "Venezuela"
             ]
         },
-        "SAmerica": [
-            "Venezuela",
-            "Peru",
-            "Brazil",
-            "Argentina"
-        ],
-        "Europe": [
-            "Iceland",
-            "GBritain",
-            "Scandinavia",
-            "NEurope",
-            "WEurope",
-            "SEurope",
-            "Ukraine"
-        ],
-        "Africa": [
-            "NAfrica",
-            "Egypt",
-            "Congo",
-            "EAfrica",
-            "Madagascar",
-            "SAfrica"
-        ],
-        "Asia": [
-            "Afghanistan",
-            "MEast",
-            "India",
-            "Ural",
-            "China",
-            "Siberia",
-            "Yakutsk",
-            "Irkutsk",
-            "Mongolia",
-            "Siam",
-            "Kamchatka",
-            "Japan"
-        ],
-        "Australia": [
-            "Indonesia",
-            "NGuinea",
-            "EAustralia",
-            "WAustralia"
-        ]
+        "SAmerica": {
+            "Venezuela": [
+                "CAmerica",
+                "Brazil",
+                "Peru"
+            ],
+            "Peru": [
+                "Venezuela",
+                "Brazil",
+                "Argentina"
+            ],
+            "Brazil": [
+                "Venezuela",
+                "Peru",
+                "Argentina"
+            ],
+            "Argentina": [
+                "Peru",
+                "Brazil"
+            ]
+        },
+        "Europe": {
+            "Iceland": [
+                "Greenland",
+                "GBritain",
+                "Scandinavia"
+            ],
+            "GBritain": [
+                "Iceland",
+                "Scandinavia",
+                "NEurope",
+                "WEurope"
+            ],
+            "Scandinavia": [
+                "Iceland",
+                "GBritain",
+                "NEurope",
+                "Ukraine"
+            ],
+            "NEurope": [
+                "Scandinavia",
+                "GBritain",
+                "WEurope",
+                "SEurope",
+                "Ukraine"
+            ],
+            "WEurope": [
+                "GBritain",
+                "NEurope",
+                "SEurope",
+                "NAfrica"
+            ],
+            "SEurope": [
+                "NEurope",
+                "Ukraine",
+                "MEast",
+                "Egypt",
+                "NAfrica",
+                "WEurope"
+            ],
+            "Ukraine": [
+                "Scandinavia",
+                "Ural",
+                "Afghanistan",
+                "MEast",
+                "SEurope",
+                "NEurope"
+            ]
+        },
+        "Africa": {
+            "NAfrica": [
+                "WEurope",
+                "Egypt",
+                "EAfrica",
+                "Congo",
+                "Brazil"
+            ],
+            "Egypt": [
+                "SEurope",
+                "MEast",
+                "EAfrica",
+                "NAfrica"
+            ],
+            "Congo": [
+                "NAfrica",
+                "EAfrica",
+                "SAfrica"
+            ],
+            "EAfrica": [
+                "MEast",
+                "Egypt",
+                "Madagascar",
+                "Congo",
+                "NAfrica"
+            ],
+            "Madagascar": [
+                "EAfrica",
+                "SAfrica"
+            ],
+            "SAfrica": [
+                "Congo",
+                "EAfrica",
+                "Madagascar"
+            ]
+        },
+        "Asia": {
+            "Afghanistan": [
+                "Ukraine",
+                "Ural",
+                "China",
+                "India",
+                "MEast"
+            ],
+            "MEast": [
+                "Ukraine",
+                "Afghanistan",
+                "India",
+                "EAfrica",
+                "Egypt",
+                "SEurope"
+            ],
+            "India": [
+                "Afghanistan",
+                "China",
+                "Siam",
+                "MEast"
+            ],
+            "Ural": [
+                "Ukraine",
+                "Siberia",
+                "China",
+                "Afghanistan"
+            ],
+            "China": [
+                "Afghanistan",
+                "Ural",
+                "Siberia",
+                "Mongolia",
+                "Siam",
+                "India"
+            ],
+            "Siberia": [
+                "Ural",
+                "Yakutsk",
+                "Irkutsk",
+                "Mongolia",
+                "China"
+            ],
+            "Yakutsk": [
+                "Siberia",
+                "Irkutsk",
+                "Kamchatka"
+            ],
+            "Irkutsk": [
+                "Yakutsk",
+                "Siberia",
+                "Mongolia",
+                "Kamchatka"
+            ],
+            "Mongolia": [
+                "Irkutsk",
+                "Kamchatka",
+                "Japan",
+                "China",
+                "Siberia"
+            ],
+            "Siam": [
+                "China",
+                "Indonesia",
+                "India"
+            ],
+            "Kamchatka": [
+                "Yakutsk",
+                "Irkutsk",
+                "Mongolia",
+                "Japan",
+                "Alaska"
+            ],
+            "Japan": [
+                "Kamchatka",
+                "Mongolia"
+            ]
+        },
+        "Australia": {
+            "Indonesia": [
+                "Siam",
+                "NGuinea",
+                "WAustralia"
+            ],
+            "NGuinea": [
+                "Indonesia",
+                "WAustralia",
+                "EAustralia"
+            ],
+            "EAustralia": [
+                "WAustralia",
+                "NGuinea"
+            ],
+            "WAustralia": [
+                "Indonesia",
+                "NGuinea",
+                "EAustralia"
+            ]
+        }
     },
     "contvals": {
         "Australia": 2,
