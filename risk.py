@@ -1,5 +1,6 @@
 from typing import List, Dict, Tuple
 from enum import Enum
+from random import shuffle
 # Player has three main phases:
 # 1. Troop allocation
 # 2. Attacking phases
@@ -43,27 +44,48 @@ class Game:
         "player": None,
         "step": Turn.Placement
     }
+    tiles = {}
 
-    def __init__(self, cards):
-        self.cards = cards
+    def __init__(self, config):
+        self.continents = {}
+        for continent, countryDict in config['countries'].items():
+            ContCountries = []
+            for countryName, neighbours in countryDict.items():
+                newCountry = Country(
+                    name=countryName,
+                    adj=neighbours)
+                ContCountries.append(newCountry)
+                self.tiles[newCountry.name] = newCountry
+
+            self.continents[continent] = Continent(
+                name=continent,
+                countries=ContCountries,
+                reward=config['contvals'][continent])
+        cards = []
+        for card in config['cards']:
+            cards.append(Card(*card))
+        self.deck = Deck(cards)
 
     def attack(self, attacker, defender) -> bool:
-        return True
+        raise NotImplementedError
 
     def fortify(self, fro, to):
-        return True
+        raise NotImplementedError
 
     def place(self, num):
-        return True
+        raise NotImplementedError
 
     def nextStep(self):
-        return True
+        raise NotImplementedError
+
+    def _validateInput(self):
+        raise NotImplementedError
 
 
 class CardUnit(Enum):
     Soldier = 1
     Horse = 2
-    Canon = 3
+    Cannon = 3
     WildCard = 4
 
 
@@ -71,17 +93,25 @@ class Card:
     location = None
     unit = None
 
-    def __init__(self, unit: CardUnit, location: Country):
-        self.unit = unit
-        if unit != CardUnit.WildCard:
-            self.location = location
+    def __init__(self, location, unit):
+
+        self.location = Game.tiles[location] if location else None
+        self.unit = {
+            "Horse": CardUnit.Horse,
+            "Soldier": CardUnit.Soldier,
+            "Cannon": CardUnit.Cannon,
+            "WildCard": CardUnit.WildCard
+        }[unit]
 
 
 class Deck:
     cards = []
 
-    def __init__(self, cards):
+    def __init__(self, cards: List[Card]):
         self.cards = cards
 
     def pop(self):
         return self.cards.pop()
+
+    def shuffle(self):
+        shuffle(self.cards)

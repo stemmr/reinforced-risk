@@ -401,7 +401,7 @@
             "Horse"
         ],
         [
-            "SAmerica",
+            "SAfrica",
             "Cannon"
         ],
         [
@@ -437,12 +437,12 @@
             "Horse"
         ],
         [
-            "WildCard",
-            null
+            null,
+            "WildCard"
         ],
         [
-            "WildCard",
-            null
+            null,
+            "WildCard"
         ]
     ]
 }

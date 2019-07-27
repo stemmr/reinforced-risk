@@ -1,5 +1,5 @@
 from risk import Game
-from config import config
+import json
 
 
 def main():
@@ -11,5 +11,10 @@ def main():
     # Attack
     # Attack: NWTerr -> Alaska
     ###
+    config = {}
+    with open('config.json') as f:
+        config = json.load(f)
+    g = Game(config)
 
-    g = Game(config,)
+
+main()
