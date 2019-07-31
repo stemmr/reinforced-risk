@@ -444,5 +444,25 @@
             null,
             "WildCard"
         ]
-    ]
+    ],
+    "players": [
+        {
+            "name": "Arthur",
+            "troops": 35,
+            "owned": []
+        },
+        {
+            "name": "Bob",
+            "troops": 35,
+            "owned": []
+        },
+        {
+            "name": "Charlie",
+            "troops": 35,
+            "owned": []
+        }
+    ],
+    "style": {
+        "init_allocation": "uniform_random"
+    }
 }

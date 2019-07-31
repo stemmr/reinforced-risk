@@ -14,7 +14,9 @@ def main():
     config = {}
     with open('config.json') as f:
         config = json.load(f)
-    g = Game(config)
+    Risk = Game(config)
+
+    # while not Risk.game_over():
 
 
 main()
