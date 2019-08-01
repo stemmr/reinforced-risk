@@ -19,6 +19,21 @@ class Player:
     def __repr__(self):
         return "Player({}, {})".format(self.name, self.free_units)
 
+    def refill_troops(self, tiles, continents):
+        new_units = 0
+        tot_tiles = 0
+        for tile in tiles.values():
+            if tile.owner == self:
+                tot_tiles += 1
+        # 1 extra unit per 3 territories
+        new_units == floor(tot_tiles / 3)
+        for continent in continents.values():
+            if continent.owner == self:
+                new_units += continent.reward
+        if new_units < 3:
+            new_units = 3
+        self.free_units += new_units
+
 
 class Country:
     owner: Player = None
@@ -72,7 +87,7 @@ class Turn:
         else:
             return "Invalid state..."
 
-    def next_state(self):
+    def next_state(self, game):
         if self.step == Step.Placement:
             if self.curr.free_units == 0:
                 self.step = Step.Attack
@@ -83,7 +98,7 @@ class Turn:
         elif self.step == Step.Fortify:
             self.curr = self.players[self.players.index(self.curr) + 1]
             self.step = Step.Placement
-            self.curr.free_units = Game._get_num_place(self.curr)
+            self.curr.refill_troops(game.tiles, game.continents)
 
 
 class Game:
@@ -146,7 +161,7 @@ class Game:
 
         # by default first player in array begins turn, can be changed in config
         self.turn = Turn(self.players)
-        self.turn.curr.free_units = self._get_num_place(self.turn.curr)
+        self.turn.curr.refill_troops(self.tiles, self.continents)
 
     def attack(self, attacker, defender) -> bool:
         raise NotImplementedError
@@ -168,6 +183,8 @@ class Game:
             print('madeit')
             player.free_units -= num
             self.tiles[tile].units += num
+            if self.turn.curr.free_units == 0:
+                self.turn.next_state(self)
             return
         raise NotImplementedError
 
@@ -177,38 +194,8 @@ class Game:
     def query_action(self):
         return str(self.turn)
 
-    def next_step(self):
-        if self.turn.step == Step.Placement and \
-                self.turn.curr.free_units == 0:
-            self.turn.step = Step.Attack
-        if self.turn.step == Step.Attack:
-            self.turn.step = Step.Fortify
-        if self.turn.step == Step.Fortify:
-
-            # need to calc placement number
-            self.turn.curr = self.turn.players[
-                self.turn.players.index(
-                    self.turn.curr) + 1 % len(self.turn.players)
-            ]
-            self.turn.step = Step.Placement
-
     def _validate_input(self):
         raise NotImplementedError
-
-    def _get_num_place(self, player: Player):
-        new_units = 0
-        tot_tiles = 0
-        for tile in self.tiles.values():
-            if tile.owner == player:
-                tot_tiles += 1
-        # 1 extra unit per 3 territories
-        new_units == floor(tot_tiles / 3)
-        for continent in self.continents.values():
-            if continent.owner == player:
-                new_units += continent.reward
-        if new_units < 3:
-            new_units = 3
-        return new_units
 
     def game_over(self):
         owners = []
