@@ -17,7 +17,7 @@ class Player:
         self.free_units = free_units
 
     def __repr__(self):
-        return "{}, {}".format(self.name, self.free_units)
+        return "Player({}, {})".format(self.name, self.free_units)
 
 
 class Country:
@@ -32,7 +32,7 @@ class Country:
         self.owner = conquerer
 
     def __repr__(self):
-        return "{}, {} units, {}".format(self.name, self.units, self.owner.name)
+        return "Country({}, {}, {})".format(self.name, self.units, self.owner)
 
 
 class Continent:
@@ -72,6 +72,19 @@ class Turn:
         else:
             return "Invalid state..."
 
+    def next_state(self):
+        if self.step == Step.Placement:
+            if self.curr.free_units == 0:
+                self.step = Step.Attack
+            else:
+                raise ValueError("Player still has units to place")
+        elif self.step == Step.Attack:
+            self.step = Step.Fortify
+        elif self.step == Step.Fortify:
+            self.curr = self.players[self.players.index(self.curr) + 1]
+            self.step = Step.Placement
+            self.curr.free_units = Game._get_num_place(self.curr)
+
 
 class Game:
 
@@ -104,9 +117,6 @@ class Game:
         for player in config['players']:
             self.players.append(Player(player['name'], player['troops']))
 
-        # by default first player in array begins turn, can be changed in config
-        self.turn = Turn(self.players)
-
         if config['style']['init_allocation'] == "uniform_random":
             idx = 0
             tiles_per_player = len(self.tiles)/len(self.players)
@@ -134,6 +144,10 @@ class Game:
                     tile.owner.free_units = 0
                 idx += 1
 
+        # by default first player in array begins turn, can be changed in config
+        self.turn = Turn(self.players)
+        self.turn.curr.free_units = self._get_num_place(self.turn.curr)
+
     def attack(self, attacker, defender) -> bool:
         raise NotImplementedError
 
@@ -144,11 +158,15 @@ class Game:
         if tile not in self.tiles:
             raise KeyError("Invalid tile given as input.")
         elif self.turn.curr.free_units < num:
-            raise ValueError("Trying to place toot many units.")
+            raise ValueError("Trying to place too many units.")
+        elif self.tiles[tile].owner != player:
+            raise ValueError("You do not own this tile.")
         elif self.turn.curr == player and \
                 self.turn.step == Step.Placement and \
                 self.turn.curr.free_units >= num and \
                 self.tiles[tile].owner == player:
+            print('madeit')
+            player.free_units -= num
             self.tiles[tile].units += num
             return
         raise NotImplementedError
@@ -174,18 +192,18 @@ class Game:
             ]
             self.turn.step = Step.Placement
 
-    def _validateInput(self):
+    def _validate_input(self):
         raise NotImplementedError
 
     def _get_num_place(self, player: Player):
         new_units = 0
         tot_tiles = 0
-        for tile in self.tiles:
+        for tile in self.tiles.values():
             if tile.owner == player:
                 tot_tiles += 1
         # 1 extra unit per 3 territories
         new_units == floor(tot_tiles / 3)
-        for continent in self.continents:
+        for continent in self.continents.values():
             if continent.owner == player:
                 new_units += continent.reward
         if new_units < 3:
