@@ -180,7 +180,6 @@ class Game:
                 self.turn.step == Step.Placement and \
                 self.turn.curr.free_units >= num and \
                 self.tiles[tile].owner == player:
-            print('madeit')
             player.free_units -= num
             self.tiles[tile].units += num
             if self.turn.curr.free_units == 0:

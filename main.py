@@ -2,7 +2,7 @@ from risk import Game, Step
 import json
 
 
-def main():
+def cli_gameplay():
     # Main control loop of Risk
     # https://www.alternatehistory.com/forum/threads/risk%C2%AE-maps.66855/
     # https://www.wikihow.com/Play-Risk
@@ -43,4 +43,4 @@ def placement_control(r):
         placement_control(r)
 
 
-main()
+cli_gameplay()
