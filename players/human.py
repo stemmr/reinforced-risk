@@ -10,11 +10,15 @@ class Human(Player):
     def __init__(self, name, troops):
         super().__init__(name, troops)
 
-    def placement_control(self, r):
+    def placement_control(self, placeable):
         try:
+            print("Pick one of:", '\n')
+            for c in placeable.keys():
+                print(c, end='\t')
+            print('\n')
             terr = input("Country to place: ")
             num = int(input("Number of troops: "))
-            r.place(r.turn.curr, num, terr)
+
         except KeyError as e:
             print(e)
             self.placement_control(r)

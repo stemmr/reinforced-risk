@@ -465,7 +465,7 @@
             "owned": []
         }
     ],
-    "style": {
+    "playstyle": {
         "init_allocation": "uniform_random"
     }
 }

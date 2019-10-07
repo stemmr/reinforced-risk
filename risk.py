@@ -79,7 +79,7 @@ class Turn:
 class Game:
 
     turn: Turn = None
-    tiles = {}
+    tiles: Dict[str, Country] = {}
     continents = {}
     deck = None
     players = []
@@ -110,7 +110,7 @@ class Game:
             elif player['type'] == "Machine":
                 self.players.append(Machine(player['name'], player['troops']))
 
-        if config['style']['init_allocation'] == "uniform_random":
+        if config['playstyle']['init_allocation'] == "uniform_random":
             idx = 0
             tiles_per_player = len(self.tiles)/len(self.players)
             # Find average amount of units to add to a tile on init
@@ -136,8 +136,11 @@ class Game:
                     tile.units += tile.owner.free_units
                     tile.owner.free_units = 0
                 idx += 1
+        elif config['playstyle']['init_allocation'] == "manual":
+            # Players can pick where to place units on turn at beginning
+            pass
 
-        # by default first player in array begins turn, can be changed in config
+            # by default first player in array begins turn, can be changed in config
         self.turn = Turn(self.players)
         self.turn.curr.refill_troops(self.tiles, self.continents)
 
@@ -185,7 +188,17 @@ class Game:
             # Add optional loop for manually placing troops at beginning
             print(self.query_action())
             if self.turn.step == Step.Placement:
-                self.turn.curr.placement_control(self)
+                free_land = {k: v for k, v in self.tiles.items()
+                             if v.owner == None}  # What if all countries are owned, stop while
+                if len(free_land) > 0:
+                    # if there are still unowned tiles, next player must place there
+                    terr, num = self.turn.curr.placement_control(free_land)
+                    self.place(self.turn.curr, num, terr)
+                else:
+                    # if all tiles are owned by a player, you must place on your own tiles
+                    owned_land = {k: v for k, v in self.tiles.items()
+                                  if v.owner == self.turn.curr}
+                    self.turn.curr.placement_control(owned_land)
             elif self.turn.step == Step.Attack:
                 terr = input("Country to attack: ")
 
