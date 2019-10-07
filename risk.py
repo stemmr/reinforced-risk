@@ -3,7 +3,7 @@ from enum import Enum
 from random import shuffle
 from math import floor
 import random
-from players.player import Player
+from players import Player, Human, Machine
 # Player has three main phases:
 # 1. Troop allocation
 # 2. Attacking phases
@@ -78,7 +78,7 @@ class Turn:
 
 class Game:
 
-    turn = None
+    turn: Turn = None
     tiles = {}
     continents = {}
     deck = None
@@ -105,7 +105,10 @@ class Game:
         self.deck = Deck(cards)
 
         for player in config['players']:
-            self.players.append(Player(player['name'], player['troops']))
+            if player['type'] == "Human":
+                self.players.append(Human(player['name'], player['troops']))
+            elif player['type'] == "Machine":
+                self.players.append(Machine(player['name'], player['troops']))
 
         if config['style']['init_allocation'] == "uniform_random":
             idx = 0
@@ -176,6 +179,17 @@ class Game:
         for continent in self.continents.values():
             owners.append(continent.owner)
         return all(owner == owners[0] and owner != None for owner in owners)
+
+    def play(self):
+        while not self.game_over():
+            # Add optional loop for manually placing troops at beginning
+            print(self.query_action())
+            if self.turn.step == Step.Placement:
+                self.turn.curr.placement_control(self)
+            elif self.turn.step == Step.Attack:
+                terr = input("Country to attack: ")
+
+        # Risk.attack()
 
 
 class CardUnit(Enum):

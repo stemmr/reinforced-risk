@@ -454,7 +454,7 @@
         },
         {
             "name": "Bob",
-            "type": "Machine",
+            "type": "Human",
             "troops": 35,
             "owned": []
         },
