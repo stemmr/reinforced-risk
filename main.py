@@ -43,4 +43,5 @@ def placement_control(r):
         placement_control(r)
 
 
-cli_gameplay()
+if __name__ == "__main__":
+    cli_gameplay()

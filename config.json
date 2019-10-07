@@ -448,16 +448,19 @@
     "players": [
         {
             "name": "Arthur",
+            "type": "Human",
             "troops": 35,
             "owned": []
         },
         {
             "name": "Bob",
+            "type": "Machine",
             "troops": 35,
             "owned": []
         },
         {
             "name": "Charlie",
+            "type": "Human",
             "troops": 35,
             "owned": []
         }
