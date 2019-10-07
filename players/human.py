@@ -21,7 +21,7 @@ class Human(Player):
 
         except KeyError as e:
             print(e)
-            self.placement_control(r)
+            self.placement_control(placeable)
         except ValueError as e:
             print(e)
-            self.placement_control(r)
+            self.placement_control(placeable)
