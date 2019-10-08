@@ -66,12 +66,20 @@ class Turn:
         if self.step == Step.Placement:
             if self.curr.free_units == 0:
                 self.step = Step.Attack
+            elif game.free_tiles_left():
+                # If there are still empty tiles, allow next player to place
+                # This should only be true in initial placement phase
+                print()
+                self.curr = self.players[(self.players.index(
+                    self.curr) + 1) % len(self.players)]
+                self.step = Step.Placement
             else:
                 raise ValueError("Player still has units to place")
         elif self.step == Step.Attack:
             self.step = Step.Fortify
         elif self.step == Step.Fortify:
-            self.curr = self.players[self.players.index(self.curr) + 1]
+            self.curr = self.players[(self.players.index(
+                self.curr) + 1) % len(self.players)]
             self.step = Step.Placement
             self.curr.refill_troops(game.tiles, game.continents)
 
@@ -111,6 +119,7 @@ class Game:
                 self.players.append(Machine(player['name'], player['troops']))
 
         if config['playstyle']['init_allocation'] == "uniform_random":
+            print("playsyle: uniform_random")
             idx = 0
             tiles_per_player = len(self.tiles)/len(self.players)
             # Find average amount of units to add to a tile on init
@@ -151,22 +160,24 @@ class Game:
         raise NotImplementedError
 
     def place(self, player: Player, num: int, tile: str):
-        if tile not in self.tiles:
+        if tile not in self.tiles.keys():
             raise KeyError("Invalid tile given as input.")
         elif self.turn.curr.free_units < num:
             raise ValueError("Trying to place too many units.")
-        elif self.tiles[tile].owner != player:
+        elif self.tiles[tile].owner != player and self.tiles[tile].owner != None:
             raise ValueError("You do not own this tile.")
+        elif num <= 0:
+            raise ValueError("Number of units to place must be greater than 0")
         elif self.turn.curr == player and \
                 self.turn.step == Step.Placement and \
-                self.turn.curr.free_units >= num and \
-                self.tiles[tile].owner == player:
+                self.turn.curr.free_units >= num:
+            if self.tiles[tile].owner == None:
+                self.tiles[tile].owner = player
             player.free_units -= num
             self.tiles[tile].units += num
             if self.turn.curr.free_units == 0:
                 self.turn.next_state(self)
             return
-        raise NotImplementedError
 
     def get_players(self):
         return self.players
@@ -183,17 +194,34 @@ class Game:
             owners.append(continent.owner)
         return all(owner == owners[0] and owner != None for owner in owners)
 
+    def free_tiles_left(self):
+        free_land = {k: v for k, v in self.tiles.items() if v.owner == None}
+        return len(free_land) > 0
+
     def play(self):
         while not self.game_over():
             # Add optional loop for manually placing troops at beginning
             print(self.query_action())
             if self.turn.step == Step.Placement:
-                free_land = {k: v for k, v in self.tiles.items()
-                             if v.owner == None}  # What if all countries are owned, stop while
-                if len(free_land) > 0:
+                  # What if all countries are owned, stop while
+                if self.free_tiles_left():
                     # if there are still unowned tiles, next player must place there
-                    terr, num = self.turn.curr.placement_control(free_land)
-                    self.place(self.turn.curr, num, terr)
+                    while True:
+                        try:
+                            terr, num = self.turn.curr.placement_control(
+                                {k: v for k, v in self.tiles.items() if v.owner == None})
+                            self.place(self.turn.curr, num, terr)
+                            print(
+                                f"{self.turn.curr.name} placed {num} troops on {terr}\n")
+                            self.turn.next_state(self)
+                        except KeyError as e:
+                            print(e)
+                            continue
+                        except ValueError as e:
+                            print(e)
+                            continue
+                        else:
+                            break
                 else:
                     # if all tiles are owned by a player, you must place on your own tiles
                     owned_land = {k: v for k, v in self.tiles.items()

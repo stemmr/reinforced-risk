@@ -466,6 +466,6 @@
         }
     ],
     "playstyle": {
-        "init_allocation": "uniform_random"
+        "init_allocation": "manual"
     }
 }
