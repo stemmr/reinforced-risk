@@ -14,7 +14,7 @@ def cli_gameplay():
     ###
     # TODO:
     config = {}
-    with open('config.json') as f:
+    with open('./game_configs/test.json') as f:
         config = json.load(f)
     Risk = Game(config)
     Risk.play()

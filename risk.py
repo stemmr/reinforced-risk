@@ -69,7 +69,6 @@ class Turn:
             elif game.free_tiles_left():
                 # If there are still empty tiles, allow next player to place
                 # This should only be true in initial placement phase
-                print()
                 self.curr = self.players[(self.players.index(
                     self.curr) + 1) % len(self.players)]
                 self.step = Step.Placement
@@ -145,13 +144,14 @@ class Game:
                     tile.units += tile.owner.free_units
                     tile.owner.free_units = 0
                 idx += 1
+                # Only do initial refill if not in manual mode
+                self.turn.curr.refill_troops(self.tiles, self.continents)
         elif config['playstyle']['init_allocation'] == "manual":
             # Players can pick where to place units on turn at beginning
             pass
 
             # by default first player in array begins turn, can be changed in config
         self.turn = Turn(self.players)
-        self.turn.curr.refill_troops(self.tiles, self.continents)
 
     def attack(self, attacker, defender) -> bool:
         raise NotImplementedError
@@ -209,7 +209,7 @@ class Game:
                     while True:
                         try:
                             terr, num = self.turn.curr.placement_control(
-                                {k: v for k, v in self.tiles.items() if v.owner == None})
+                                {k: v for k, v in self.tiles.items() if v.owner == None}, querystyle="initial")
                             self.place(self.turn.curr, num, terr)
                             print(
                                 f"{self.turn.curr.name} placed {num} troops on {terr}\n")

@@ -1,0 +1,86 @@
+{
+    "countries": {
+        "N": {
+            "N1": [
+                "N2",
+                "N3",
+                "E1",
+                "W1"
+            ],
+            "N2": [
+                "N3",
+                "N1"
+            ],
+            "N3": [
+                "N1",
+                "N2"
+            ]
+        },
+        "E": {
+            "E1": [
+                "E2",
+                "E3",
+                "N1",
+                "W1"
+            ],
+            "E2": [
+                "E3",
+                "E1"
+            ],
+            "E3": [
+                "E1",
+                "E2"
+            ]
+        },
+        "W": {
+            "W1": [
+                "W2",
+                "W3",
+                "E1",
+                "N1"
+            ],
+            "W2": [
+                "W3",
+                "W1"
+            ],
+            "W3": [
+                "W1",
+                "W2"
+            ]
+        }
+    },
+    "contvals": {
+        "N": 1,
+        "E": 2,
+        "W": 3
+    },
+    "cards": [
+        [
+            "N1",
+            "Horse"
+        ]
+    ],
+    "players": [
+        {
+            "name": "Arthur",
+            "type": "Human",
+            "troops": 35,
+            "owned": []
+        },
+        {
+            "name": "Bob",
+            "type": "Human",
+            "troops": 35,
+            "owned": []
+        },
+        {
+            "name": "Charlie",
+            "type": "Human",
+            "troops": 35,
+            "owned": []
+        }
+    ],
+    "playstyle": {
+        "init_allocation": "manual"
+    }
+}

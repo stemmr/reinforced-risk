@@ -10,13 +10,19 @@ class Human(Player):
     def __init__(self, name, troops):
         super().__init__(name, troops)
 
-    def placement_control(self, placeable):
-
+    def placement_control(self, placeable, querystyle="default"):
+        """
+        Abstracts how a user should be queried where to place units 
+        should also create attack_control and fortify_control
+        """
         print("Pick one of:", '\n')
         for c in placeable.keys():
             print(c, end='\t')
         print('\n')
         terr = input("Country to place: ")
-        num = int(input("Number of troops: "))
+        if querystyle == "default":
+            num = int(input("Number of troops: "))
+        else:
+            num = 1
 
         return terr, num
