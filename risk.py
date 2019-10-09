@@ -73,7 +73,8 @@ class Turn:
                     self.curr) + 1) % len(self.players)]
                 self.step = Step.Placement
             else:
-                raise ValueError("Player still has units to place")
+                raise ValueError(
+                    f"Player still has {self.curr.free_units} units to place")
         elif self.step == Step.Attack:
             self.step = Step.Fortify
         elif self.step == Step.Fortify:
@@ -117,6 +118,9 @@ class Game:
             elif player['type'] == "Machine":
                 self.players.append(Machine(player['name'], player['troops']))
 
+        # by default first player in array begins turn, can be changed in config
+        self.turn = Turn(self.players)
+
         if config['playstyle']['init_allocation'] == "uniform_random":
             print("playsyle: uniform_random")
             idx = 0
@@ -150,9 +154,6 @@ class Game:
             # Players can pick where to place units on turn at beginning
             pass
 
-            # by default first player in array begins turn, can be changed in config
-        self.turn = Turn(self.players)
-
     def attack(self, attacker, defender) -> bool:
         raise NotImplementedError
 
@@ -175,8 +176,8 @@ class Game:
                 self.tiles[tile].owner = player
             player.free_units -= num
             self.tiles[tile].units += num
-            if self.turn.curr.free_units == 0:
-                self.turn.next_state(self)
+            # if self.turn.curr.free_units == 0:
+            #     self.turn.next_state(self)
             return
 
     def get_players(self):
@@ -198,12 +199,15 @@ class Game:
         free_land = {k: v for k, v in self.tiles.items() if v.owner == None}
         return len(free_land) > 0
 
+    def find_attack_lines(self, player):
+
     def play(self):
         while not self.game_over():
             # Add optional loop for manually placing troops at beginning
             print(self.query_action())
             if self.turn.step == Step.Placement:
                   # What if all countries are owned, stop while
+                print("Free tiles:", self.free_tiles_left())
                 if self.free_tiles_left():
                     # if there are still unowned tiles, next player must place there
                     while True:
@@ -226,11 +230,36 @@ class Game:
                     # if all tiles are owned by a player, you must place on your own tiles
                     owned_land = {k: v for k, v in self.tiles.items()
                                   if v.owner == self.turn.curr}
-                    self.turn.curr.placement_control(owned_land)
+                    while True:
+                        try:
+                            terr, num = self.turn.curr.placement_control(
+                                owned_land, querystyle="default")
+                            self.place(self.turn.curr, num, terr)
+                            print(
+                                f"{self.turn.curr.name} placed {num} troops on {terr}\n")
+                            self.turn.next_state(self)
+                        except KeyError as e:
+                            print(e)
+                            continue
+                        except ValueError as e:
+                            print(e)
+                            continue
+                        else:
+                            break
             elif self.turn.step == Step.Attack:
-                terr = input("Country to attack: ")
-
-        # Risk.attack()
+                while True:
+                    try:
+                        line, num = self.turn.curr.attack_control()
+                        # self.turn.next_state(self)
+                    except (KeyError, ValueError) as e:
+                        print(e)
+                        continue
+                    else:
+                        break
+            elif self.turn.step == Step.Fortify:
+                to = input("Country to move from")
+                print("Fority")
+                # Risk.attack()
 
 
 class CardUnit(Enum):

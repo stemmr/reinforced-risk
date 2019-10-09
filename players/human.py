@@ -26,3 +26,12 @@ class Human(Player):
             num = 1
 
         return terr, num
+
+    def attack_control(self, att_lines):
+        print("Pick an attack line:")
+        for line in att_lines:
+            print(f"{line[0]}->{line[1]}", end="\t")
+        fro = input("Attacking from: ")
+        to = input("Attacking to: ")
+        num = input("how many troops? ")
+        return (fro, to), num

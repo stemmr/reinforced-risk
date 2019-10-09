@@ -81,6 +81,6 @@
         }
     ],
     "playstyle": {
-        "init_allocation": "manual"
+        "init_allocation": "uniform_random"
     }
 }
