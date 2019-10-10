@@ -235,13 +235,28 @@ class Game:
 
     def find_fortify_lines(self, player: Player):
         # fortification can only happen once per turn and can only happen
-        # between connected tiles
-        player_countries = [(tile, tile.adj) for k,
-                            tile in self.tiles.items() if tile.owner == player]
+        # # between connected tiles of the same owner
+        # print([t for t in self.tiles if self.tiles[t].owner == player])
+        player_countries = [(tile.name,  t) for _, tile in self.tiles.items(
+        ) for t in tile.adj if tile.owner == player and self.tiles[t].owner.name == "Charlie"]
+
         tile_groups = []
-        for count, adjacent in player_countries:
-            print(count, adjacent)
-        return tile_groups
+        print(player_countries)
+        for country, adj in player_countries:
+            added = False
+            for group in tile_groups:
+                if country in group or adj in group:
+                    # if one in group add both
+                    group |= set([country, adj])
+                    added = True
+            if added == False:
+                tile_groups.append(set([country, adj]))
+
+        fortify_paths = []
+        for group in tile_groups:
+            fortify_paths += [(tname, oname) for tname in list(group)
+                              for oname in list(group) if tname != oname]
+        return fortify_paths
 
     def play(self):
         while not self.game_over():
@@ -294,8 +309,12 @@ class Game:
                 while True:
                     try:
                         fro, to = self.turn.curr.attack_control(att_lines)
-                        self.attack(fro, to)
-                        self.turn.next_state(self)
+                        if fro == None or to == None:
+                            # Only go to next state if player has stopped attacking
+                            self.turn.next_state(self)
+                        else:
+                            self.attack(fro, to)
+
                     except (KeyError, ValueError) as e:
                         print(e)
                         continue
