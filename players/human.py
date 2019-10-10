@@ -35,5 +35,7 @@ class Human(Player):
         print("\n")
         fro = input("Attacking from: ")
         to = input("Attacking to: ")
-        num = input("how many troops? ")
-        return (fro, to), num
+        for att, defn in att_lines:
+            if att.name == fro and defn.name == to:
+                return att, defn
+        raise ValueError("That is an invalid attack line, pick another please")
