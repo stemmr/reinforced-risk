@@ -46,3 +46,16 @@ class Human(Player):
 
     def fortify_control(self, fort_lines):
         print("pick a fortify line:")
+        for line in fort_lines:
+            print(f"{line[0]} -> {line[1]}")
+        ffro = input("Fortify from: ")
+        fto = input("Fortify to: ")
+        num = int(input("Number of units: "))
+        print("\n")
+        if ffro == '' or fto == '':
+            return None, None, 0
+        for fro, to in fort_lines:
+            if ffro == fro and fto == to:
+                return ffro, fto, num
+        raise ValueError(
+            "That is an invalid fortify line, pick another please")

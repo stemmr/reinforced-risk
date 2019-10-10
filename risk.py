@@ -180,8 +180,14 @@ class Game:
                 print(f"{attacker.name} lost a unit")
                 attacker.units -= 1
 
-    def fortify(self, fro, to):
-        raise NotImplementedError
+    def fortify(self, fro: Country, to: Country, num: int):
+        if fro.units > num and num > 0:
+            fro.units -= num
+            to.units += num
+        elif num <= 0:
+            raise ValueError("Must fortify with at least one unit")
+        else:
+            raise ValueError("Cannot fortify with that many units")
 
     def place(self, player: Player, num: int, tile: str):
         if tile not in self.tiles.keys():
@@ -308,9 +314,14 @@ class Game:
 
             elif self.turn.step == Step.Fortify:
                 fort_lines = self.find_fortify_lines(self.turn.curr)
-                to = input("Country to move from")
-                print("Fority")
-                # Risk.attack()
+                try:
+                    ffro, fto, num = self.turn.curr.fortify_control(fort_lines)
+                    if ffro != None and fto != None and num > 0:
+                        self.fortify(self.tiles[ffro], self.tiles[fto], num)
+                    self.turn.next_state(self)
+                except (KeyError, ValueError) as e:
+                    print(e)
+                    continue
 
 
 class CardUnit(Enum):
