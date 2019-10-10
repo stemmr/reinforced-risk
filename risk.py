@@ -154,8 +154,26 @@ class Game:
             # Players can pick where to place units on turn at beginning
             pass
 
-    def attack(self, attacker, defender) -> bool:
-        raise NotImplementedError
+    def attack(self, attacker: Country, defender: Country):
+        # Might need to refactor to allow machine to find probabilities
+        if attacker.units >= 4:
+            attdie = 3
+        elif attacker.units == 3:
+            attdie = 2
+        elif attacker.units == 2:
+            attdie = 1
+        if defender.units >= 2:
+            defdie = 2
+        elif defender.units == 1:
+            defdie = 1
+        attrolls = sorted([random.randint(1, 6) for _ in range(attdie)])
+        defrolls = sorted([random.randint(1, 6) for _ in range(defdie)])
+        pairs = zip(attrolls, defrolls)
+        for att, defn in pairs:
+            if att > defn:
+                defender.units -= 1
+            else:
+                attacker.units -= 1
 
     def fortify(self, fro, to):
         raise NotImplementedError
@@ -169,11 +187,11 @@ class Game:
             raise ValueError("You do not own this tile.")
         elif num <= 0:
             raise ValueError("Number of units to place must be greater than 0")
-        elif self.turn.curr == player and \
-                self.turn.step == Step.Placement and \
+        elif self.turn.curr == player and
+                self.turn.step == Step.Placement and
                 self.turn.curr.free_units >= num:
             if self.tiles[tile].owner == None:
-                self.tiles[tile].owner = player
+                self.tiles[tile].owner=player
             player.free_units -= num
             self.tiles[tile].units += num
             # if self.turn.curr.free_units == 0:
@@ -190,23 +208,23 @@ class Game:
         raise NotImplementedError
 
     def game_over(self):
-        owners = []
+        owners=[]
         for continent in self.continents.values():
             owners.append(continent.owner)
         return all(owner == owners[0] and owner != None for owner in owners)
 
     def free_tiles_left(self):
-        free_land = {k: v for k, v in self.tiles.items() if v.owner == None}
+        free_land={k: v for k, v in self.tiles.items() if v.owner == None}
         return len(free_land) > 0
 
     def find_attack_lines(self, player: Player):
         # given a player, find all tiles it can currently attack
-        player_countries = {tile: tile.adj for k,
+        player_countries={tile: tile.adj for k,
                             tile in self.tiles.items() if tile.owner == player}
         line_list = []
         for country, reach in player_countries.items():
             for nbor in reach:
-                if self.tiles[nbor].owner != player:
+                if self.tiles[nbor].owner != player and country.units > 1:
                     line_list.append((country, self.tiles[nbor]))
         return line_list
 
@@ -222,7 +240,7 @@ class Game:
                     while True:
                         try:
                             terr, num = self.turn.curr.placement_control(
-                                {k: v for k, v in self.tiles.items() if v.owner == None}, querystyle="initial")
+                                {k: v for k, v in self.tiles.items() if v.owner == None}, querystyle = "initial")
                             self.place(self.turn.curr, num, terr)
                             print(
                                 f"{self.turn.curr.name} placed {num} troops on {terr}\n")
@@ -237,12 +255,12 @@ class Game:
                             break
                 else:
                     # if all tiles are owned by a player, you must place on your own tiles
-                    owned_land = {k: v for k, v in self.tiles.items()
+                    owned_land={k: v for k, v in self.tiles.items()
                                   if v.owner == self.turn.curr}
                     while True:
                         try:
                             terr, num = self.turn.curr.placement_control(
-                                owned_land, querystyle="default")
+                                owned_land, querystyle = "default")
                             self.place(self.turn.curr, num, terr)
                             print(
                                 f"{self.turn.curr.name} placed {num} troops on {terr}\n")
@@ -256,10 +274,11 @@ class Game:
                         else:
                             break
             elif self.turn.step == Step.Attack:
-                att_lines = self.find_attack_lines(self.turn.curr)
+                att_lines=self.find_attack_lines(self.turn.curr)
                 while True:
                     try:
-                        line, num = self.turn.curr.attack_control(att_lines)
+                        line, num=self.turn.curr.attack_control(att_lines)
+
                         # self.turn.next_state(self)
                     except (KeyError, ValueError) as e:
                         print(e)
@@ -267,26 +286,26 @@ class Game:
                     else:
                         break
             elif self.turn.step == Step.Fortify:
-                to = input("Country to move from")
+                to=input("Country to move from")
                 print("Fority")
                 # Risk.attack()
 
 
 class CardUnit(Enum):
-    Soldier = 1
-    Horse = 2
-    Cannon = 3
-    WildCard = 4
+    Soldier=1
+    Horse=2
+    Cannon=3
+    WildCard=4
 
 
 class Card:
-    location = None
-    unit = None
+    location=None
+    unit=None
 
     def __init__(self, location, unit):
 
-        self.location = Game.tiles[location] if location else None
-        self.unit = {
+        self.location=Game.tiles[location] if location else None
+        self.unit={
             "Horse": CardUnit.Horse,
             "Soldier": CardUnit.Soldier,
             "Cannon": CardUnit.Cannon,
