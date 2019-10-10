@@ -315,7 +315,6 @@ class Game:
                         self.turn.next_state(self)
                     else:
                         if self.attack(fro, to):
-                            print(fro, to)
                             uns = self.turn.curr.overtaking_tile(
                                 list(range(1, fro.units)))
                             # moving uns units to the player that won
