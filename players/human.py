@@ -59,3 +59,11 @@ class Human(Player):
                 return ffro, fto, num
         raise ValueError(
             "That is an invalid fortify line, pick another please")
+
+    def overtaking_tile(self, num_units):
+        print("You won an attack!")
+        print(num_units)
+        uns = int(input("pick a number of units to move: "))
+        if uns <= 0 or uns > num_units[-1]:
+            raise ValueError(f"{uns} is not a valid number of units to move")
+        return uns

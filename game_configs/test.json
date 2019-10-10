@@ -70,13 +70,7 @@
         {
             "name": "Bob",
             "type": "Human",
-            "troops": 35,
-            "owned": []
-        },
-        {
-            "name": "Charlie",
-            "type": "Human",
-            "troops": 35,
+            "troops": 5,
             "owned": []
         }
     ],

@@ -169,8 +169,11 @@ class Game:
             defdie = 2
         elif defender.units == 1:
             defdie = 1
-        attrolls = sorted([random.randint(1, 6) for _ in range(attdie)])
-        defrolls = sorted([random.randint(1, 6) for _ in range(defdie)])
+        attrolls = sorted([random.randint(1, 6)
+                           for _ in range(attdie)], reverse=True)
+        defrolls = sorted([random.randint(1, 6)
+                           for _ in range(defdie)], reverse=True)
+        print(attrolls, defrolls)
         pairs = zip(attrolls, defrolls)
         for att, defn in pairs:
             if att > defn:
@@ -179,6 +182,11 @@ class Game:
             else:
                 print(f"{attacker.name} lost a unit")
                 attacker.units -= 1
+        # Did the attack destroy all units on tile?
+        if defender.units <= 0:
+            return True
+        else:
+            False
 
     def fortify(self, fro: Country, to: Country, num: int):
         if fro.units > num and num > 0:
@@ -306,7 +314,14 @@ class Game:
                         # Only go to next state if player has stopped attacking
                         self.turn.next_state(self)
                     else:
-                        self.attack(fro, to)
+                        if self.attack(fro, to):
+                            print(fro, to)
+                            uns = self.turn.curr.overtaking_tile(
+                                list(range(1, fro.units)))
+                            # moving uns units to the player that won
+                            to.owner = self.turn.curr
+                            fro.units -= uns
+                            to.units += uns
 
                 except (KeyError, ValueError) as e:
                     print(e)
