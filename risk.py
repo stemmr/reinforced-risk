@@ -308,6 +308,8 @@ class Game:
 
             elif self.turn.step == Step.Attack:
                 att_lines = self.find_attack_lines(self.turn.curr)
+                if len(att_lines) == 0:
+                    self.turn.next_state(self)
                 try:
                     fro, to = self.turn.curr.attack_control(att_lines)
                     if fro == None or to == None:
@@ -328,6 +330,8 @@ class Game:
 
             elif self.turn.step == Step.Fortify:
                 fort_lines = self.find_fortify_lines(self.turn.curr)
+                if len(fort_lines) == 0:
+                    self.turn.next_state(self)
                 try:
                     ffro, fto, num = self.turn.curr.fortify_control(fort_lines)
                     if ffro != None and fto != None and num > 0:
