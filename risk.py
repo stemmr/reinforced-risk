@@ -199,7 +199,16 @@ class Game:
         free_land = {k: v for k, v in self.tiles.items() if v.owner == None}
         return len(free_land) > 0
 
-    def find_attack_lines(self, player):
+    def find_attack_lines(self, player: Player):
+        # given a player, find all tiles it can currently attack
+        player_countries = {tile: tile.adj for k,
+                            tile in self.tiles.items() if tile.owner == player}
+        line_list = []
+        for country, reach in player_countries.items():
+            for nbor in reach:
+                if self.tiles[nbor].owner != player:
+                    line_list.append((country, self.tiles[nbor]))
+        return line_list
 
     def play(self):
         while not self.game_over():
@@ -247,9 +256,10 @@ class Game:
                         else:
                             break
             elif self.turn.step == Step.Attack:
+                att_lines = self.find_attack_lines(self.turn.curr)
                 while True:
                     try:
-                        line, num = self.turn.curr.attack_control()
+                        line, num = self.turn.curr.attack_control(att_lines)
                         # self.turn.next_state(self)
                     except (KeyError, ValueError) as e:
                         print(e)
