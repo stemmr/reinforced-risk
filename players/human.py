@@ -35,7 +35,14 @@ class Human(Player):
         print("\n")
         fro = input("Attacking from: ")
         to = input("Attacking to: ")
+        if to == '' and fro == '':
+            # additional option not to attack
+            # of course we would prefer a peaceful world!
+            return None, None
         for att, defn in att_lines:
             if att.name == fro and defn.name == to:
                 return att, defn
         raise ValueError("That is an invalid attack line, pick another please")
+
+    def fortify_control(self, fort_lines):
+        print("pick a fortify line:")

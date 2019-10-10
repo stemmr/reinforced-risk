@@ -157,6 +157,8 @@ class Game:
 
     def attack(self, attacker: Country, defender: Country):
         # Might need to refactor to allow machine to find probabilities
+        if attacker == None or defender == None:
+            return
         if attacker.units >= 4:
             attdie = 3
         elif attacker.units == 3:
@@ -172,8 +174,10 @@ class Game:
         pairs = zip(attrolls, defrolls)
         for att, defn in pairs:
             if att > defn:
+                print(f"{defender.name} lost a unit")
                 defender.units -= 1
             else:
+                print(f"{attacker.name} lost a unit")
                 attacker.units -= 1
 
     def fortify(self, fro, to):
@@ -220,7 +224,7 @@ class Game:
 
     def find_attack_lines(self, player: Player):
         # given a player, find all tiles it can currently attack
-        player_countries = {tile: tile.adj for k,
+        player_countries = {tile: tile.adj for _,
                             tile in self.tiles.items() if tile.owner == player}
         line_list = []
         for country, reach in player_countries.items():
@@ -228,6 +232,16 @@ class Game:
                 if self.tiles[nbor].owner != player and country.units > 1:
                     line_list.append((country, self.tiles[nbor]))
         return line_list
+
+    def find_fortify_lines(self, player: Player):
+        # fortification can only happen once per turn and can only happen
+        # between connected tiles
+        player_countries = [(tile, tile.adj) for k,
+                            tile in self.tiles.items() if tile.owner == player]
+        tile_groups = []
+        for count, adjacent in player_countries:
+            print(count, adjacent)
+        return tile_groups
 
     def play(self):
         while not self.game_over():
@@ -274,6 +288,7 @@ class Game:
                             continue
                         else:
                             break
+
             elif self.turn.step == Step.Attack:
                 att_lines = self.find_attack_lines(self.turn.curr)
                 while True:
@@ -286,7 +301,9 @@ class Game:
                         continue
                     else:
                         break
+
             elif self.turn.step == Step.Fortify:
+                fort_lines = self.find_fortify_lines(self.turn.curr)
                 to = input("Country to move from")
                 print("Fority")
                 # Risk.attack()
