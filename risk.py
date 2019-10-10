@@ -267,59 +267,44 @@ class Game:
                 print("Free tiles:", self.free_tiles_left())
                 if self.free_tiles_left():
                     # if there are still unowned tiles, next player must place there
-                    while True:
-                        try:
-                            terr, num = self.turn.curr.placement_control(
-                                {k: v for k, v in self.tiles.items() if v.owner == None}, querystyle="initial")
-                            self.place(self.turn.curr, num, terr)
-                            print(
-                                f"{self.turn.curr.name} placed {num} troops on {terr}\n")
-                            self.turn.next_state(self)
-                        except KeyError as e:
-                            print(e)
-                            continue
-                        except ValueError as e:
-                            print(e)
-                            continue
-                        else:
-                            break
+                    try:
+                        terr, num = self.turn.curr.placement_control(
+                            {k: v for k, v in self.tiles.items() if v.owner == None}, querystyle="initial")
+                        self.place(self.turn.curr, num, terr)
+                        print(
+                            f"{self.turn.curr.name} placed {num} troops on {terr}\n")
+                        self.turn.next_state(self)
+                    except (KeyError, ValueError) as e:
+                        print(e)
+                        continue
                 else:
                     # if all tiles are owned by a player, you must place on your own tiles
                     owned_land = {k: v for k, v in self.tiles.items()
                                   if v.owner == self.turn.curr}
-                    while True:
-                        try:
-                            terr, num = self.turn.curr.placement_control(
-                                owned_land, querystyle="default")
-                            self.place(self.turn.curr, num, terr)
-                            print(
-                                f"{self.turn.curr.name} placed {num} troops on {terr}\n")
-                            self.turn.next_state(self)
-                        except KeyError as e:
-                            print(e)
-                            continue
-                        except ValueError as e:
-                            print(e)
-                            continue
-                        else:
-                            break
-
-            elif self.turn.step == Step.Attack:
-                att_lines = self.find_attack_lines(self.turn.curr)
-                while True:
                     try:
-                        fro, to = self.turn.curr.attack_control(att_lines)
-                        if fro == None or to == None:
-                            # Only go to next state if player has stopped attacking
-                            self.turn.next_state(self)
-                        else:
-                            self.attack(fro, to)
-
+                        terr, num = self.turn.curr.placement_control(
+                            owned_land, querystyle="default")
+                        self.place(self.turn.curr, num, terr)
+                        print(
+                            f"{self.turn.curr.name} placed {num} troops on {terr}\n")
+                        self.turn.next_state(self)
                     except (KeyError, ValueError) as e:
                         print(e)
                         continue
+
+            elif self.turn.step == Step.Attack:
+                att_lines = self.find_attack_lines(self.turn.curr)
+                try:
+                    fro, to = self.turn.curr.attack_control(att_lines)
+                    if fro == None or to == None:
+                        # Only go to next state if player has stopped attacking
+                        self.turn.next_state(self)
                     else:
-                        break
+                        self.attack(fro, to)
+
+                except (KeyError, ValueError) as e:
+                    print(e)
+                    continue
 
             elif self.turn.step == Step.Fortify:
                 fort_lines = self.find_fortify_lines(self.turn.curr)
