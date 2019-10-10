@@ -148,8 +148,9 @@ class Game:
                     tile.units += tile.owner.free_units
                     tile.owner.free_units = 0
                 idx += 1
-                # Only do initial refill if not in manual mode
-                self.turn.curr.refill_troops(self.tiles, self.continents)
+
+            # Only do initial refill if not in manual mode
+            self.turn.curr.refill_troops(self.tiles, self.continents)
         elif config['playstyle']['init_allocation'] == "manual":
             # Players can pick where to place units on turn at beginning
             pass
