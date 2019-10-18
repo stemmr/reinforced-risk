@@ -10,5 +10,14 @@ class Machine(Player):
     def __init__(self, name, troops):
         super.__init__(name, troops)
 
-    def placement_control(self, r):
-        NotImplemented
+    def placement_control(self, placeable, querystyle="default"):
+        pass
+
+    def attack_control(self, att_lines):
+        pass
+
+    def fortify_control(self, fort_lines):
+        pass
+
+    def overtaking_tile(self, num_units):
+        pass

@@ -1,4 +1,4 @@
-from risk import Game, Step
+from game import Risk
 import json
 import argparse
 
@@ -22,8 +22,8 @@ def cli_gameplay():
     config = {}
     with open(args.file) as f:
         config = json.load(f)
-    Risk = Game(config)
-    Risk.play()
+    risk = Risk(config)
+    risk.play()
 
 
 if __name__ == "__main__":

@@ -100,7 +100,7 @@ class Turn:
             self.curr.refill_troops(game.tiles, game.continents)
 
 
-class Game:
+class Risk:
 
     turn: Turn = None
     tiles: Dict[str, Country] = {}
@@ -386,7 +386,7 @@ class Card:
 
     def __init__(self, location, unit):
 
-        self.location = Game.tiles[location] if location else None
+        self.location = Risk.tiles[location] if location else None
         self.unit = {
             "Horse": CardUnit.Horse,
             "Soldier": CardUnit.Soldier,
