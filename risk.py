@@ -12,6 +12,7 @@ from players import Player, Human, Machine
 
 class Country:
     owner: Player = None
+    continent = None
     units: int = 0
 
     def __init__(self, name: str, adj: List[str]):
@@ -20,9 +21,12 @@ class Country:
 
     def conquer(self, conquerer: Player):
         self.owner = conquerer
+        # Assume owner has been set in initialization
+        # else crash (need to fix Game constructor)
+        self.continent.update_owner()
 
     def __repr__(self):
-        return "Country({}, {}, {})".format(self.name, self.units, self.owner)
+        return f"Country({self.owner},{self.units},{self.continent})"
 
 
 class Continent:
@@ -33,6 +37,16 @@ class Continent:
         self.name = name
         self.reward = reward
         self.countries = countries
+        for country in self.countries:
+            country.continent = self
+
+    def update_owner(self):
+        potential_owner = self.countries[0].owner
+        if all(cntry.owner == potential_owner for cntry in self.countries):
+            self.owner = potential_owner
+
+    def __repr__(self):
+        return "Continent({}, {}, {})".format(self.name, self.reward, self.owner)
 
 
 class Step(Enum):
@@ -44,12 +58,12 @@ class Step(Enum):
 class Turn:
     """
     This class holds all the state associated with
-    which state we are currently in.
+    whose turn and step of the turn we are currently in.
     """
 
     def __init__(self, players: List[Player]):
         self.curr = players[0]
-        self.players = players
+        self.players: List[Player] = players
         self.step = Step.Placement
 
     def __repr__(self):
@@ -78,8 +92,14 @@ class Turn:
         elif self.step == Step.Attack:
             self.step = Step.Fortify
         elif self.step == Step.Fortify:
+            # if the next player has been defeated, remove from list.
             self.curr = self.players[(self.players.index(
                 self.curr) + 1) % len(self.players)]
+            if [t for t in game.tiles.values() if t.owner == self.curr] == []:
+                prev = self.curr
+                self.curr = self.players[(self.players.index(
+                    self.curr) + 1) % len(self.players)]
+                self.players.remove(prev)
             self.step = Step.Placement
             self.curr.refill_troops(game.tiles, game.continents)
 
@@ -133,7 +153,7 @@ class Game:
                 for player
                 in self.players}
             for _, tile in self.tiles.items():
-                tile.owner = self.players[idx % len(self.players)]
+                tile.conquer(self.players[idx % len(self.players)])
                 # randomly allocate either one more or one less to tile to
                 units_to_tile = units_per_tile[tile.owner.name]['min']
                 # Eat up remainder troops near beginning of loop
@@ -154,6 +174,18 @@ class Game:
         elif config['playstyle']['init_allocation'] == "manual":
             # Players can pick where to place units on turn at beginning
             pass
+
+    def __repr__(self):
+        """
+        Serialize game state 
+        """
+        state = {
+            "num_players": len(self.turn.players),
+            "curr_player": self.turn.players.index(self.turn.curr)+1,
+            "tiles": list(self.tiles.values())
+        }
+
+        return str(state)
 
     def attack(self, attacker: Country, defender: Country):
         # Might need to refactor to allow machine to find probabilities
@@ -184,6 +216,8 @@ class Game:
                 attacker.units -= 1
         # Did the attack destroy all units on tile?
         if defender.units <= 0:
+            # make attacker owner of defender
+            defender.conquer(attacker.owner)
             return True
         else:
             False
@@ -223,7 +257,7 @@ class Game:
     def query_action(self):
         return str(self.turn)
 
-    def _validate_input(self):
+    def validate_input(self):
         raise NotImplementedError
 
     def game_over(self):
@@ -250,12 +284,10 @@ class Game:
     def find_fortify_lines(self, player: Player):
         # fortification can only happen once per turn and can only happen
         # # between connected tiles of the same owner
-        # print([t for t in self.tiles if self.tiles[t].owner == player])
         player_countries = [(tile.name,  t) for _, tile in self.tiles.items(
-        ) for t in tile.adj if tile.owner == player and self.tiles[t].owner.name == "Charlie"]
+        ) for t in tile.adj if tile.owner == player and self.tiles[t].owner == player]
 
         tile_groups = []
-        print(player_countries)
         for country, adj in player_countries:
             added = False
             for group in tile_groups:
@@ -269,16 +301,17 @@ class Game:
         fortify_paths = []
         for group in tile_groups:
             fortify_paths += [(tname, oname) for tname in list(group)
-                              for oname in list(group) if tname != oname]
+                              for oname in list(group) if tname != oname and self.tiles[tname].units > 1]
         return fortify_paths
 
     def play(self):
         while not self.game_over():
             # Add optional loop for manually placing troops at beginning
+            print(self.tiles)
+
             print(self.query_action())
             if self.turn.step == Step.Placement:
-                  # What if all countries are owned, stop while
-                print("Free tiles:", self.free_tiles_left())
+                # What if all countries are owned, stop while
                 if self.free_tiles_left():
                     # if there are still unowned tiles, next player must place there
                     try:
@@ -319,8 +352,6 @@ class Game:
                         if self.attack(fro, to):
                             uns = self.turn.curr.overtaking_tile(
                                 list(range(1, fro.units)))
-                            # moving uns units to the player that won
-                            to.owner = self.turn.curr
                             fro.units -= uns
                             to.units += uns
 

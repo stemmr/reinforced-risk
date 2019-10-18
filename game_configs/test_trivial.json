@@ -1,0 +1,41 @@
+{
+    "countries": {
+        "N": {
+            "A": [
+                "B"
+            ]
+        },
+        "E": {
+            "B": [
+                "A"
+            ]
+        }
+    },
+    "contvals": {
+        "N": 1,
+        "E": 2
+    },
+    "cards": [
+        [
+            "A",
+            "Horse"
+        ]
+    ],
+    "players": [
+        {
+            "name": "Alice",
+            "type": "Human",
+            "troops": 35,
+            "owned": []
+        },
+        {
+            "name": "Bob",
+            "type": "Human",
+            "troops": 1,
+            "owned": []
+        }
+    ],
+    "playstyle": {
+        "init_allocation": "uniform_random"
+    }
+}
