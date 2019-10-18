@@ -1,5 +1,6 @@
 from risk import Game, Step
 import json
+import argparse
 
 
 def cli_gameplay():
@@ -13,8 +14,13 @@ def cli_gameplay():
     # Attack: NWTerr -> Alaska
     ###
     # TODO:
+    parser = argparse.ArgumentParser(
+        description="Pick config file to run risk from")
+    parser.add_argument('--file', help="Select config file to use",
+                        default='./game_configs/config.json')
+    args = parser.parse_args()
     config = {}
-    with open('./game_configs/test.json') as f:
+    with open(args.file) as f:
         config = json.load(f)
     Risk = Game(config)
     Risk.play()
