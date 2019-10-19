@@ -3,7 +3,7 @@ from enum import Enum
 from random import shuffle
 from math import floor
 import random
-from players import Player, Human, Machine
+from players import Player, Human, Machine, RandomAgent
 
 
 class Country:
@@ -133,6 +133,9 @@ class Risk:
                 self.players.append(Human(player['name'], player['troops']))
             elif player['type'] == "Machine":
                 self.players.append(Machine(player['name'], player['troops']))
+            elif player['type'] == "Random":
+                self.players.append(RandomAgent(
+                    player['name'], player['troops']))
 
         # by default first player in array begins turn, can be changed in config
         self.turn = Turn(self.players)
@@ -201,14 +204,13 @@ class Risk:
                            for _ in range(attdie)], reverse=True)
         defrolls = sorted([random.randint(1, 6)
                            for _ in range(defdie)], reverse=True)
-        print(attrolls, defrolls)
         pairs = zip(attrolls, defrolls)
         for att, defn in pairs:
             if att > defn:
-                print(f"{defender.name} lost a unit")
+                #print(f"{defender.name} lost a unit")
                 defender.units -= 1
             else:
-                print(f"{attacker.name} lost a unit")
+                #print(f"{attacker.name} lost a unit")
                 attacker.units -= 1
         # Did the attack destroy all units on tile?
         if defender.units <= 0:
@@ -281,8 +283,9 @@ class Risk:
         return line_list
 
     def find_fortify_lines(self, player: Player):
+        # Could use a refactor
         # fortification can only happen once per turn and can only happen
-        # # between connected tiles of the same owner
+        # between connected tiles of the same owner
         player_countries = [(tile.name,  t) for _, tile in self.tiles.items(
         ) for t in tile.adj if tile.owner == player and self.tiles[t].owner == player]
 
@@ -299,26 +302,23 @@ class Risk:
 
         fortify_paths = []
         for group in tile_groups:
-            fortify_paths += [(tname, oname) for tname in list(group)
+            fortify_paths += [(self.tiles[tname], self.tiles[oname]) for tname in list(group)
                               for oname in list(group) if tname != oname and self.tiles[tname].units > 1]
         return fortify_paths
 
     def play(self):
         while not self.game_over():
             # Add optional loop for manually placing troops at beginning
-            print(self.tiles)
-
-            print(self.query_action())
+            # print(self.query_action())
             if self.turn.step == Step.Placement:
                 # What if all countries are owned, stop while
                 if self.free_tiles_left():
                     # if there are still unowned tiles, next player must place there
                     try:
                         terr, num = self.turn.curr.placement_control(
-                            {k: v for k, v in self.tiles.items() if v.owner == None}, querystyle="initial")
+                            {k: v for k, v in self.tiles.items() if v.owner == None}, self.turn.curr.free_units, querystyle="initial")
                         self.place(self.turn.curr, num, terr)
-                        print(
-                            f"{self.turn.curr.name} placed {num} troops on {terr}\n")
+                        #print(f"{self.turn.curr.name} placed {num} troops on {terr}\n")
                         self.turn.next_state(self)
                     except (KeyError, ValueError) as e:
                         print(e)
@@ -329,12 +329,13 @@ class Risk:
                                   if v.owner == self.turn.curr}
                     try:
                         terr, num = self.turn.curr.placement_control(
-                            owned_land, querystyle="default")
+                            owned_land, self.turn.curr.free_units, querystyle="default")
                         self.place(self.turn.curr, num, terr)
-                        print(
-                            f"{self.turn.curr.name} placed {num} troops on {terr}\n")
+                        #print(f"{self.turn.curr.name} placed {num} troops on {terr}\n")
                         self.turn.next_state(self)
-                    except (KeyError, ValueError) as e:
+                    except ValueError as ve:
+                        continue
+                    except KeyError as e:
                         print(e)
                         continue
 
@@ -365,11 +366,12 @@ class Risk:
                 try:
                     ffro, fto, num = self.turn.curr.fortify_control(fort_lines)
                     if ffro != None and fto != None and num > 0:
-                        self.fortify(self.tiles[ffro], self.tiles[fto], num)
+                        self.fortify(ffro, fto, num)
                     self.turn.next_state(self)
                 except (KeyError, ValueError) as e:
-                    print(e)
+                    print(f"Fortification Error:{e}")
                     continue
+        print(f"{self.game_over().name} wins the match")
         return self.game_over()
 
 

@@ -8,7 +8,7 @@ class Machine(Player):
     """
 
     def __init__(self, name, troops):
-        super.__init__(name, troops)
+        super().__init__(name, troops)
 
     def placement_control(self, placeable, querystyle="default"):
         pass

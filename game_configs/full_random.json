@@ -1,0 +1,471 @@
+{
+    "countries": {
+        "NAmerica": {
+            "Alaska": [
+                "Kamchatka",
+                "NWTerritory",
+                "Alberta"
+            ],
+            "NWTerritory": [
+                "Alaska",
+                "Alberta",
+                "Greenland",
+                "Ontario"
+            ],
+            "Alberta": [
+                "Alaska",
+                "NWTerritory",
+                "Ontario",
+                "WUSA"
+            ],
+            "Ontario": [
+                "NWTerritory",
+                "Greenland",
+                "Quebec",
+                "EUSA",
+                "WUSA",
+                "Alberta"
+            ],
+            "Quebec": [
+                "Greenland",
+                "Ontario",
+                "EUSA"
+            ],
+            "Greenland": [
+                "Iceland",
+                "NWTerritory",
+                "Quebec"
+            ],
+            "WUSA": [
+                "Alberta",
+                "Ontario",
+                "EUSA",
+                "CAmerica"
+            ],
+            "EUSA": [
+                "Quebec",
+                "Ontario",
+                "WUSA",
+                "CAmerica"
+            ],
+            "CAmerica": [
+                "WUSA",
+                "EUSA",
+                "Venezuela"
+            ]
+        },
+        "SAmerica": {
+            "Venezuela": [
+                "CAmerica",
+                "Brazil",
+                "Peru"
+            ],
+            "Peru": [
+                "Venezuela",
+                "Brazil",
+                "Argentina"
+            ],
+            "Brazil": [
+                "Venezuela",
+                "Peru",
+                "Argentina"
+            ],
+            "Argentina": [
+                "Peru",
+                "Brazil"
+            ]
+        },
+        "Europe": {
+            "Iceland": [
+                "Greenland",
+                "GBritain",
+                "Scandinavia"
+            ],
+            "GBritain": [
+                "Iceland",
+                "Scandinavia",
+                "NEurope",
+                "WEurope"
+            ],
+            "Scandinavia": [
+                "Iceland",
+                "GBritain",
+                "NEurope",
+                "Ukraine"
+            ],
+            "NEurope": [
+                "Scandinavia",
+                "GBritain",
+                "WEurope",
+                "SEurope",
+                "Ukraine"
+            ],
+            "WEurope": [
+                "GBritain",
+                "NEurope",
+                "SEurope",
+                "NAfrica"
+            ],
+            "SEurope": [
+                "NEurope",
+                "Ukraine",
+                "MEast",
+                "Egypt",
+                "NAfrica",
+                "WEurope"
+            ],
+            "Ukraine": [
+                "Scandinavia",
+                "Ural",
+                "Afghanistan",
+                "MEast",
+                "SEurope",
+                "NEurope"
+            ]
+        },
+        "Africa": {
+            "NAfrica": [
+                "WEurope",
+                "Egypt",
+                "EAfrica",
+                "Congo",
+                "Brazil"
+            ],
+            "Egypt": [
+                "SEurope",
+                "MEast",
+                "EAfrica",
+                "NAfrica"
+            ],
+            "Congo": [
+                "NAfrica",
+                "EAfrica",
+                "SAfrica"
+            ],
+            "EAfrica": [
+                "MEast",
+                "Egypt",
+                "Madagascar",
+                "Congo",
+                "NAfrica"
+            ],
+            "Madagascar": [
+                "EAfrica",
+                "SAfrica"
+            ],
+            "SAfrica": [
+                "Congo",
+                "EAfrica",
+                "Madagascar"
+            ]
+        },
+        "Asia": {
+            "Afghanistan": [
+                "Ukraine",
+                "Ural",
+                "China",
+                "India",
+                "MEast"
+            ],
+            "MEast": [
+                "Ukraine",
+                "Afghanistan",
+                "India",
+                "EAfrica",
+                "Egypt",
+                "SEurope"
+            ],
+            "India": [
+                "Afghanistan",
+                "China",
+                "Siam",
+                "MEast"
+            ],
+            "Ural": [
+                "Ukraine",
+                "Siberia",
+                "China",
+                "Afghanistan"
+            ],
+            "China": [
+                "Afghanistan",
+                "Ural",
+                "Siberia",
+                "Mongolia",
+                "Siam",
+                "India"
+            ],
+            "Siberia": [
+                "Ural",
+                "Yakutsk",
+                "Irkutsk",
+                "Mongolia",
+                "China"
+            ],
+            "Yakutsk": [
+                "Siberia",
+                "Irkutsk",
+                "Kamchatka"
+            ],
+            "Irkutsk": [
+                "Yakutsk",
+                "Siberia",
+                "Mongolia",
+                "Kamchatka"
+            ],
+            "Mongolia": [
+                "Irkutsk",
+                "Kamchatka",
+                "Japan",
+                "China",
+                "Siberia"
+            ],
+            "Siam": [
+                "China",
+                "Indonesia",
+                "India"
+            ],
+            "Kamchatka": [
+                "Yakutsk",
+                "Irkutsk",
+                "Mongolia",
+                "Japan",
+                "Alaska"
+            ],
+            "Japan": [
+                "Kamchatka",
+                "Mongolia"
+            ]
+        },
+        "Australia": {
+            "Indonesia": [
+                "Siam",
+                "NGuinea",
+                "WAustralia"
+            ],
+            "NGuinea": [
+                "Indonesia",
+                "WAustralia",
+                "EAustralia"
+            ],
+            "EAustralia": [
+                "WAustralia",
+                "NGuinea"
+            ],
+            "WAustralia": [
+                "Indonesia",
+                "NGuinea",
+                "EAustralia"
+            ]
+        }
+    },
+    "contvals": {
+        "Australia": 2,
+        "NAmerica": 5,
+        "SAmerica": 2,
+        "Africa": 3,
+        "Europe": 5,
+        "Asia": 7
+    },
+    "cards": [
+        [
+            "Afghanistan",
+            "Horse"
+        ],
+        [
+            "Alaska",
+            "Soldier"
+        ],
+        [
+            "Alberta",
+            "Horse"
+        ],
+        [
+            "Argentina",
+            "Soldier"
+        ],
+        [
+            "Brazil",
+            "Cannon"
+        ],
+        [
+            "Congo",
+            "Soldier"
+        ],
+        [
+            "CAmerica",
+            "Cannon"
+        ],
+        [
+            "China",
+            "Soldier"
+        ],
+        [
+            "EAfrica",
+            "Soldier"
+        ],
+        [
+            "EAustralia",
+            "Cannon"
+        ],
+        [
+            "Quebec",
+            "Horse"
+        ],
+        [
+            "EUSA",
+            "Cannon"
+        ],
+        [
+            "Egypt",
+            "Soldier"
+        ],
+        [
+            "GBritain",
+            "Cannon"
+        ],
+        [
+            "Greenland",
+            "Horse"
+        ],
+        [
+            "Iceland",
+            "Soldier"
+        ],
+        [
+            "India",
+            "Horse"
+        ],
+        [
+            "Indonesia",
+            "Cannon"
+        ],
+        [
+            "Irkutsk",
+            "Horse"
+        ],
+        [
+            "Japan",
+            "Cannon"
+        ],
+        [
+            "Kamchatka",
+            "Soldier"
+        ],
+        [
+            "Madagascar",
+            "Soldier"
+        ],
+        [
+            "MEast",
+            "Soldier"
+        ],
+        [
+            "Mongolia",
+            "Soldier"
+        ],
+        [
+            "NGuinea",
+            "Soldier"
+        ],
+        [
+            "NAfrica",
+            "Horse"
+        ],
+        [
+            "NEurope",
+            "Cannon"
+        ],
+        [
+            "NWTerritory",
+            "Cannon"
+        ],
+        [
+            "Ontario",
+            "Horse"
+        ],
+        [
+            "Peru",
+            "Soldier"
+        ],
+        [
+            "Ukraine",
+            "Horse"
+        ],
+        [
+            "Scandinavia",
+            "Horse"
+        ],
+        [
+            "Siberia",
+            "Horse"
+        ],
+        [
+            "SAfrica",
+            "Cannon"
+        ],
+        [
+            "Siam",
+            "Soldier"
+        ],
+        [
+            "SEurope",
+            "Cannon"
+        ],
+        [
+            "Ural",
+            "Horse"
+        ],
+        [
+            "Venezuela",
+            "Soldier"
+        ],
+        [
+            "WAustralia",
+            "Cannon"
+        ],
+        [
+            "WEurope",
+            "Cannon"
+        ],
+        [
+            "WUSA",
+            "Cannon"
+        ],
+        [
+            "Yakutsk",
+            "Horse"
+        ],
+        [
+            null,
+            "WildCard"
+        ],
+        [
+            null,
+            "WildCard"
+        ]
+    ],
+    "players": [
+        {
+            "name": "Arthur",
+            "type": "Random",
+            "troops": 135,
+            "owned": []
+        },
+        {
+            "name": "Bob",
+            "type": "Random",
+            "troops": 35,
+            "owned": []
+        },
+        {
+            "name": "Charlie",
+            "type": "Random",
+            "troops": 35,
+            "owned": []
+        }
+    ],
+    "playstyle": {
+        "init_allocation": "uniform_random"
+    }
+}
