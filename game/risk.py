@@ -141,7 +141,7 @@ class Risk:
         self.turn = Turn(self.players)
 
         if config['playstyle']['init_allocation'] == "uniform_random":
-            print("playsyle: uniform_random")
+            print("playstyle: uniform_random")
             idx = 0
             tiles_per_player = len(self.tiles)/len(self.players)
             # Find average amount of units to add to a tile on init
@@ -307,6 +307,7 @@ class Risk:
         return fortify_paths
 
     def play(self):
+        steps = 0
         while not self.game_over():
             # Add optional loop for manually placing troops at beginning
             # print(self.query_action())
@@ -332,17 +333,17 @@ class Risk:
                             owned_land, self.turn.curr.free_units, querystyle="default")
                         self.place(self.turn.curr, num, terr)
                         #print(f"{self.turn.curr.name} placed {num} troops on {terr}\n")
-                        self.turn.next_state(self)
-                    except ValueError as ve:
-                        continue
-                    except KeyError as e:
-                        print(e)
+                        if self.turn.curr.free_units == 0:
+                            self.turn.next_state(self)
+                    except (KeyError, ValueError) as e:
+                        print(f"Placement error: {e}")
                         continue
 
             elif self.turn.step == Step.Attack:
                 att_lines = self.find_attack_lines(self.turn.curr)
                 if len(att_lines) == 0:
                     self.turn.next_state(self)
+                    continue
                 try:
                     fro, to = self.turn.curr.attack_control(att_lines)
                     if fro == None or to == None:
@@ -356,22 +357,24 @@ class Risk:
                             to.units += uns
 
                 except (KeyError, ValueError) as e:
-                    print(e)
+                    print(f"Attacking error{e}")
                     continue
 
             elif self.turn.step == Step.Fortify:
                 fort_lines = self.find_fortify_lines(self.turn.curr)
                 if len(fort_lines) == 0:
                     self.turn.next_state(self)
+                    continue
                 try:
                     ffro, fto, num = self.turn.curr.fortify_control(fort_lines)
                     if ffro != None and fto != None and num > 0:
                         self.fortify(ffro, fto, num)
                     self.turn.next_state(self)
+                    steps += 1
                 except (KeyError, ValueError) as e:
                     print(f"Fortification Error:{e}")
                     continue
-        print(f"{self.game_over().name} wins the match")
+        print(f"{self.game_over().name} wins the match in {steps} turns")
         return self.game_over()
 
 
