@@ -10,10 +10,11 @@ class Human(Player):
     def __init__(self, name, troops):
         super().__init__(name, troops)
 
-    def placement_control(self, placeable, querystyle="default"):
+    def placement_control(self, placeable, state, querystyle="default"):
         """
         Abstracts how a user should be queried where to place units 
         should also create attack_control and fortify_control
+        ignore number of units if passed
         """
         print("Pick one of:", '\n')
         for c in placeable.keys():
@@ -27,7 +28,7 @@ class Human(Player):
 
         return terr, num
 
-    def attack_control(self, att_lines):
+    def attack_control(self, att_lines, state):
         print("Pick an attack line:")
         for idx, line in enumerate(att_lines):
             if idx % 3 == 0:
@@ -46,7 +47,7 @@ class Human(Player):
                 return att, defn
         raise ValueError("That is an invalid attack line, pick another please")
 
-    def fortify_control(self, fort_lines):
+    def fortify_control(self, fort_lines, state):
         print("pick a fortify line:")
         for line in fort_lines:
             print(f"{line[0].name} -> {line[1].name}")
@@ -62,7 +63,7 @@ class Human(Player):
         raise ValueError(
             "That is an invalid fortify line, pick another please")
 
-    def overtaking_tile(self, num_units):
+    def overtaking_tile(self, num_units, state):
         print("You won an attack!")
         print(num_units)
         uns = int(input("pick a number of units to move: "))
