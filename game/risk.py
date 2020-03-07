@@ -132,10 +132,9 @@ class Risk:
             if player['type'] == "Human":
                 self.players.append(Human(player['name'], player['troops']))
             elif player['type'] == "Machine":
-                self.players.append(Machine(player['name'], player['troops']))
+                self.players.append(Machine(player['name'], player['troops'], terr_num=len(self.tiles), play_num=len(self.players)))
             elif player['type'] == "Random":
-                self.players.append(RandomAgent(
-                    player['name'], player['troops']))
+                self.players.append(RandomAgent(player['name'], player['troops']))
 
         # by default first player in array begins turn, can be changed in config
         self.turn = Turn(self.players)
@@ -176,7 +175,7 @@ class Risk:
 
     def __repr__(self):
         """
-        Serialize game state 
+        Serialize game
         """
         state = {
             "num_players": len(self.turn.players),
@@ -185,6 +184,25 @@ class Risk:
         }
 
         return str(state)
+
+    def gen_state_vector(self):
+        state_vector = []
+        countries = [ tile[1] for tile in sorted(self.tiles.items())]
+        for country in countries:
+            idx = self.players.index(country.owner)
+            p = [0 for _ in range(len(self.players))]
+            p[idx] = country.units
+            state_vector += p
+        
+        if self.turn.step == Step.Placement:
+            state_vector += [1,0,0]
+        elif self.turn.step == Step.Attack:
+            state_vector += [0,1,0]
+        elif self.turn.step == Step.Fortify:
+            state_vector += [0,0,1]
+
+        return state_vector
+
 
     def attack(self, attacker: Country, defender: Country):
         # Might need to refactor to allow machine to find probabilities
@@ -310,14 +328,17 @@ class Risk:
         steps = 0
         while not self.game_over():
             # Add optional loop for manually placing troops at beginning
-            # print(self.query_action())
+            self.gen_state_vector()
             if self.turn.step == Step.Placement:
                 # What if all countries are owned, stop while
                 if self.free_tiles_left():
                     # if there are still unowned tiles, next player must place there
                     try:
                         terr, num = self.turn.curr.placement_control(
-                            {k: v for k, v in self.tiles.items() if v.owner == None}, self.turn.curr.free_units, querystyle="initial")
+                            {k: v for k, v in self.tiles.items() if v.owner == None}, 
+                            units=self.turn.curr.free_units, 
+                            state= self.gen_state_vector(), 
+                            querystyle="initial")
                         self.place(self.turn.curr, num, terr)
                         #print(f"{self.turn.curr.name} placed {num} troops on {terr}\n")
                         self.turn.next_state(self)
@@ -345,14 +366,16 @@ class Risk:
                     self.turn.next_state(self)
                     continue
                 try:
-                    fro, to = self.turn.curr.attack_control(att_lines)
+                    fro, to = self.turn.curr.attack_control(att_lines, state=self.gen_state_vector())
                     if fro == None or to == None:
                         # Only go to next state if player has stopped attacking
                         self.turn.next_state(self)
                     else:
                         if self.attack(fro, to):
                             uns = self.turn.curr.overtaking_tile(
-                                list(range(1, fro.units)))
+                                list(range(1, fro.units)),
+                                state = self.gen_state_vector()
+                                )
                             fro.units -= uns
                             to.units += uns
 
@@ -366,14 +389,21 @@ class Risk:
                     self.turn.next_state(self)
                     continue
                 try:
-                    ffro, fto, num = self.turn.curr.fortify_control(fort_lines)
+                    ffro, fto, num = self.turn.curr.fortify_control(fort_lines, state=self.gen_state_vector())
                     if ffro != None and fto != None and num > 0:
                         self.fortify(ffro, fto, num)
                     self.turn.next_state(self)
                     steps += 1
+                    if steps % 1000 == 0:
+                        print(steps)
+                    if steps % 10000 == 0:
+                        print(self)
                 except (KeyError, ValueError) as e:
                     print(f"Fortification Error:{e}")
                     continue
+            
+            
+
         print(f"{self.game_over().name} wins the match in {steps} turns")
         return self.game_over()
 
