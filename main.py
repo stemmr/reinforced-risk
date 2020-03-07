@@ -16,14 +16,26 @@ def cli_gameplay():
     # TODO:
     parser = argparse.ArgumentParser(
         description="Pick config file to run risk from")
-    parser.add_argument('--file', help="Select config file to use",
-                        default='./game_configs/config.json')
+    parser.add_argument("--file", help="Select config file to use",
+                        default="./game_configs/config.json")
+    parser.add_argument("--train", dest="training", action='store_true')
+    parser.set_defaults(training=False)
+
     args = parser.parse_args()
+
     config = {}
     with open(args.file) as f:
         config = json.load(f)
-    risk = Risk(config)
-    risk.play()
+
+    if not args.training:
+        risk = Risk(config)
+        risk.play()
+
+    elif args.training:
+        if config.players.type == "Human":
+            raise Exception
+        risk = Risk(config)
+
 
 
 if __name__ == "__main__":
