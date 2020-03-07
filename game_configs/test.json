@@ -63,7 +63,7 @@
     "players": [
         {
             "name": "Arthur",
-            "type": "Human",
+            "type": "Machine",
             "troops": 35,
             "owned": []
         },
