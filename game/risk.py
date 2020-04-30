@@ -4,6 +4,7 @@ from random import shuffle
 from math import floor
 import random
 from players import Player, Human, Machine, RandomAgent
+import torch
 
 
 class Country:
@@ -202,7 +203,8 @@ class Risk:
         elif self.turn.step == Step.Fortify:
             state_vector += [0,0,1]
 
-        return state_vector
+        # state has unsinged 16 bit values, cannot have negative number of units on tile
+        return torch.tensor(state_vector, dtype=torch.float) 
 
     def state_idx(self, country, player):
         countries = [ tile[1] for tile in sorted(self.tiles.items())]
@@ -383,6 +385,7 @@ class Risk:
                                 list(range(1, fro.units)),
                                 state = self.gen_state_vector()
                                 )
+                            print(fro, to, fro.units, to.units)
                             fro.units -= uns
                             to.units += uns
 
