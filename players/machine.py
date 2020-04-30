@@ -30,17 +30,29 @@ class Machine(Player):
     all functionality should be in Player, where this just provides a way to act as a player 
     """
 
-    def __init__(self, name, troops, terr_num, play_num):
-        super().__init__(name, troops)
+    def __init__(self, name, troops, context, terr_num, play_num):
+        super().__init__(name, troops, context)
+        print(terr_num, play_num)
         self.dvn = DVN(terr_num, play_num)
         self.name = name
         self.troops = troops
 
-    def placement_control(self, placeable, state, querystyle="default"):
+    def placement_control(self, placeable, units, state, querystyle="default"):
+        
         state = torch.FloatTensor(state)
         val = self.dvn(state)
-        print(val, placeable)
-        pdb.set_trace()
+        best_move = (-float("inf"), None)
+
+        for country in placeable.values():
+            trial_state = state.clone()
+            trial_state[self.context.state_idx(country, self)] += 1
+            print(trial_state)
+            val = self.dvn(trial_state)
+            if val > best_move[0]:
+                best_move = (val, country)
+
+        # Place a single unit on the best tile, calculated by DVN
+        return best_move[1], 1
         
 
     def attack_control(self, att_lines, state):
@@ -50,6 +62,9 @@ class Machine(Player):
         pass
 
     def overtaking_tile(self, num_units, state):
+        pass
+
+    def feedback(self, signal, data, state, next_state):
         pass
 
 

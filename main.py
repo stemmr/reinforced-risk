@@ -35,6 +35,9 @@ def cli_gameplay():
         if config.players.type == "Human":
             raise Exception
         risk = Risk(config)
+        for episode in range(100):
+            risk.play()
+            risk.reset()
 
 
 

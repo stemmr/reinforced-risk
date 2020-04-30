@@ -69,7 +69,7 @@
         },
         {
             "name": "Bob",
-            "type": "Human",
+            "type": "Random",
             "troops": 5,
             "owned": []
         }

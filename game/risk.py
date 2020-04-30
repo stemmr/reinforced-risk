@@ -130,11 +130,11 @@ class Risk:
 
         for player in config['players']:
             if player['type'] == "Human":
-                self.players.append(Human(player['name'], player['troops']))
+                self.players.append(Human(player['name'], player['troops'], self))
             elif player['type'] == "Machine":
-                self.players.append(Machine(player['name'], player['troops'], terr_num=len(self.tiles), play_num=len(self.players)))
+                self.players.append(Machine(player['name'], player['troops'], self, terr_num=len(self.tiles), play_num=len(config['players'])))
             elif player['type'] == "Random":
-                self.players.append(RandomAgent(player['name'], player['troops']))
+                self.players.append(RandomAgent(player['name'], player['troops'], self))
 
         # by default first player in array begins turn, can be changed in config
         self.turn = Turn(self.players)
@@ -186,6 +186,7 @@ class Risk:
         return str(state)
 
     def gen_state_vector(self):
+        # State vector is of size
         state_vector = []
         countries = [ tile[1] for tile in sorted(self.tiles.items())]
         for country in countries:
@@ -202,6 +203,10 @@ class Risk:
             state_vector += [0,0,1]
 
         return state_vector
+
+    def state_idx(self, country, player):
+        countries = [ tile[1] for tile in sorted(self.tiles.items())]
+        return len(self.players)*countries.index(country) + self.players.index(player)
 
 
     def attack(self, attacker: Country, defender: Country):
@@ -328,7 +333,6 @@ class Risk:
         steps = 0
         while not self.game_over():
             # Add optional loop for manually placing troops at beginning
-            self.gen_state_vector()
             if self.turn.step == Step.Placement:
                 # What if all countries are owned, stop while
                 if self.free_tiles_left():
@@ -351,9 +355,9 @@ class Risk:
                                   if v.owner == self.turn.curr}
                     try:
                         terr, num = self.turn.curr.placement_control(
-                            owned_land, self.turn.curr.free_units, querystyle="default")
+                            owned_land, self.turn.curr.free_units, self.gen_state_vector(), querystyle="default")
                         self.place(self.turn.curr, num, terr)
-                        #print(f"{self.turn.curr.name} placed {num} troops on {terr}\n")
+
                         if self.turn.curr.free_units == 0:
                             self.turn.next_state(self)
                     except (KeyError, ValueError) as e:
@@ -370,7 +374,10 @@ class Risk:
                     if fro == None or to == None:
                         # Only go to next state if player has stopped attacking
                         self.turn.next_state(self)
+                        self.turn.curr.feedback("attack", False, state=self.gen_state_vector(), next_state=self.gen_state_vector()) 
                     else:
+                        pre_attack_state = self.gen_state_vector()
+
                         if self.attack(fro, to):
                             uns = self.turn.curr.overtaking_tile(
                                 list(range(1, fro.units)),
@@ -378,6 +385,8 @@ class Risk:
                                 )
                             fro.units -= uns
                             to.units += uns
+
+                        self.turn.curr.feedback("attack", True, pre_attack_state, next_state=self.gen_state_vector()) 
 
                 except (KeyError, ValueError) as e:
                     print(f"Attacking error{e}")
@@ -407,6 +416,9 @@ class Risk:
         print(f"{self.game_over().name} wins the match in {steps} turns")
         return self.game_over()
 
+    def reset(self):
+        # Resets the game, allowing for further training
+        raise NotImplementedError
 
 class CardUnit(Enum):
     Soldier = 1

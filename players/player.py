@@ -4,9 +4,10 @@ from math import floor
 class Player:
     free_units = 0
 
-    def __init__(self, name, free_units=0):
+    def __init__(self, name, free_units, context):
         self.name = name
-        self.free_units = free_units
+        self.free_units = free_units if free_units else 0
+        self.context = context
 
     def __repr__(self):
         return "Player({}, {})".format(self.name, self.free_units)
@@ -25,3 +26,7 @@ class Player:
         if new_units < 3:
             new_units = 3
         self.free_units += new_units
+
+    def feedback(self, signal, data, state, next_state):
+        # Feedback method only has an effect in Machine types
+        pass

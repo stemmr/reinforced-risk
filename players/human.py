@@ -7,8 +7,8 @@ class Human(Player):
     all functionality should be in Player, where this just provides a way to act as a player 
     """
 
-    def __init__(self, name, troops):
-        super().__init__(name, troops)
+    def __init__(self, name, troops, context):
+        super().__init__(name, troops, context)
 
     def placement_control(self, placeable, state, querystyle="default"):
         """
