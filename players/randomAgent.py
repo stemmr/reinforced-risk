@@ -10,7 +10,7 @@ class RandomAgent(Player):
     def __init__(self, name, troops, context):
         super().__init__(name, troops, context)
 
-    def placement_control(self, placeable, units, querystyle="default"):
+    def placement_control(self, placeable, units, state, querystyle="default"):
         ch = random.choice(list(placeable.keys())), random.randint(1, units)
         return ch
 
@@ -27,8 +27,7 @@ class RandomAgent(Player):
         if random.random() > 0.9 or len(fort_lines) == 0:
             return None, None, 0
         fline = random.choice(fort_lines)
-        num = random.randint(0, fline[0].units - 1)
-        return fline[0], fline[1], num
+        return fline
 
     def overtaking_tile(self, num_units, state):
         return random.choice(num_units)

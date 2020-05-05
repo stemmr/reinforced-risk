@@ -33,7 +33,6 @@ class Machine(Player):
 
     def __init__(self, name, troops, context, terr_num, play_num):
         super().__init__(name, troops, context)
-        print(terr_num, play_num)
         self.dvn = DVN(terr_num, play_num)
         self.name = name
         self.troops = troops
@@ -112,7 +111,25 @@ class Machine(Player):
         return best_val[1] #tuple of the best attack line (att, def)
 
     def fortify_control(self, fort_lines, state):
-        pass
+        # First check value of not fortifying after move
+        best_line = (self.dvn(state.clone()), (None, None, 0))
+
+        for fro_tile, to_tile, num_units in fort_lines:
+            
+            test_state = state.clone()
+            
+            from_idx = self.context.state_idx(fro_tile, self)
+            to_idx = self.context.state_idx(to_tile, self)
+            
+            test_state[from_idx] -= num_units
+            test_state[to_idx] += num_units
+
+            fortify_value = self.dvn(test_state)
+            
+            if  fortify_value > best_line[0]:
+                best_line = (fortify_value, (fro_tile, to_tile, num_units))
+
+        return best_line[1]
 
     def overtaking_tile(self, num_units, state):
         # stub for the time being

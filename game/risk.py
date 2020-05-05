@@ -327,8 +327,10 @@ class Risk:
 
         fortify_paths = []
         for group in tile_groups:
-            fortify_paths += [(self.tiles[tname], self.tiles[oname]) for tname in list(group)
-                              for oname in list(group) if tname != oname and self.tiles[tname].units > 1]
+            fortify_paths += [(self.tiles[from_name], self.tiles[to_name], num_units) 
+                                for from_name in list(group) 
+                                for to_name in list(group) if from_name != to_name and self.tiles[from_name].units > 1
+                                for num_units in range(1, self.tiles[from_name].units)]
         return fortify_paths
 
     def play(self):
@@ -385,7 +387,6 @@ class Risk:
                                 list(range(1, fro.units)),
                                 state = self.gen_state_vector()
                                 )
-                            print(fro, to, fro.units, to.units)
                             fro.units -= uns
                             to.units += uns
 
